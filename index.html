@@ -253,9 +253,8 @@ async function init() {
   }
 
   sb.auth.onAuthStateChange(async (_evt, session) => {
-    if (session?.user && !currentUser) {
-      currentUser = session.user; await enterApp();
-    } else if (!session?.user && currentUser) {
+    if (!session?.user && currentUser) {
+      // Sessão encerrada (logout ou expiração) — volta para login
       currentUser = null; state = { sections: [] }; show('auth-screen');
     }
   });
@@ -289,14 +288,21 @@ async function doLogin() {
   const email = g('login-email').value.trim();
   const pw    = g('login-password').value;
   const errEl = g('login-error');
-  const infEl = g('login-info');
   const btn   = g('btn-login');
-  errEl.classList.remove('show'); infEl.classList.remove('show');
+  errEl.classList.remove('show');
   if (!email||!pw){ showMsg(errEl,'Preencha e-mail e senha.'); return; }
   btn.disabled=true; btn.textContent='Entrando...';
-  const { error } = await sb.auth.signInWithPassword({ email, password:pw });
+  const { data, error } = await sb.auth.signInWithPassword({ email, password:pw });
   btn.disabled=false; btn.textContent='Entrar';
-  if (error) showMsg(errEl, tradErr(error.message));
+  if (error) {
+    showMsg(errEl, tradErr(error.message));
+    return;
+  }
+  // Login OK — redireciona imediatamente sem depender do onAuthStateChange
+  if (data?.user) {
+    currentUser = data.user;
+    await enterApp();
+  }
 }
 
 async function doLogout() {
