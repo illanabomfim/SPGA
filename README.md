@@ -2,7 +2,7 @@ Sistema Pessoal de Gestão de Atividades (SPGA)
 
 Aplicação web (Single-Page Application) para organização de atividades semanais, com autenticação, persistência em banco de dados e gestão de anexos.
 
-Desenvolvida em HTML, CSS e JavaScript puro (Vanilla JS), com integração ao Supabase como backend e deploy via Vercel.
+Desenvolvida em HTML, CSS e JavaScript puro, com integração ao Supabase como backend e deploy via Vercel.
 
 Visão geral
 
